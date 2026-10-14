@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Generador de horarios CRAI</title>
+<style>
+:root{--navy:#17365d;--blue:#087ea4;--cyan:#13a5c7;--pale:#eaf6fa;--gold:#f7e7a3;--ink:#203040;--muted:#667788;--line:#d8e1e8;--bg:#f4f7fa;--green:#16794b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:linear-gradient(115deg,#17365d,#087ea4);color:white;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+header h1{font-size:24px;margin:0 0 5px}header p{margin:0;color:#d9edf5;font-size:13px}
+main{max-width:1600px;margin:auto;padding:20px}.nav{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+button,.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer;background:var(--blue);color:white}
+button.secondary{background:white;color:var(--navy);border:1px solid var(--line)}button.active{background:var(--navy);color:white}button.danger{background:#fff0ef;color:var(--red);border:1px solid #f2c5c2}
+.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #17365d08}
+h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:0 0 10px}.muted{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:12px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;background:white;color:var(--ink);font:inherit;font-size:13px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}.people{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:10px}
+.person{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:start}
+.avatar{height:46px;width:46px;border-radius:50%;background:#e2f2f7;color:var(--navy);display:grid;place-items:center;font-weight:800;border:1px solid #c9e7ef;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}
+.person-name{font-weight:700;font-size:13px;margin:3px 0 5px}.person-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.person-controls .wide{grid-column:1/-1}
+.hidden{display:none!important}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.note{padding:11px 13px;background:#f0f8fb;border-left:4px solid var(--cyan);border-radius:7px;font-size:13px;line-height:1.5}
+.results{display:grid;grid-template-columns:repeat(3,minmax(240px,1fr));gap:12px}.option{border:1px solid var(--line);border-radius:12px;padding:14px}.option h3{display:flex;justify-content:space-between;gap:8px}.pill{font-size:11px;border-radius:99px;background:#e6f6ee;color:var(--green);padding:4px 8px;white-space:nowrap}.score{font-size:13px;color:var(--muted);margin:8px 0 12px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:15px;align-items:start}.sidebar{position:sticky;top:12px;max-height:80vh;overflow:auto}.personpick{display:flex;gap:8px;align-items:center;width:100%;text-align:left;margin:4px 0;background:#f6f9fb;color:var(--ink);border:1px solid var(--line);padding:8px}.personpick.selected{border-color:var(--cyan);background:#e8f7fb}.personpick .avatar{width:32px;height:32px;min-width:32px;font-size:11px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px;max-height:70vh}.schedule{border-collapse:separate;border-spacing:0;min-width:1150px;width:100%;font-size:12px;background:white}.schedule th,.schedule td{border-right:1px solid #dbe3e9;border-bottom:1px solid #dbe3e9;padding:6px;vertical-align:top}.schedule thead th{position:sticky;top:0;z-index:2;background:#078db8;color:white;text-align:center}.schedule thead th:first-child{left:0;z-index:4}.schedule td:first-child{position:sticky;left:0;background:#f7fafc;z-index:1;min-width:200px}.schedule select,.schedule input{min-width:90px;padding:5px;font-size:11px}.schedule .sitecell{min-width:145px}.schedule .timecell{min-width:95px}.schedule .rest{background:#e9eef2;text-align:center;color:#667788;font-weight:700}
+.bad{color:var(--red);font-weight:700}.good{color:var(--green);font-weight:700}.histrow{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.histrow:last-child{border:0}.small{font-size:11px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.people,.results{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.sidebar{position:static;max-height:none}.schedule td:first-child{min-width:170px}}
+@media(max-width:520px){main{padding:10px}.grid{grid-template-columns:1fr}.person-controls{grid-template-columns:1fr}.person-controls .wide{grid-column:auto}header{padding:18px}}
+</style>
+</head>
+<body>
+<header><div><h1>Generador de horarios CRAI</h1><p>Planificación semanal · 21 colaboradores · 6 sedes</p></div><div id="savedBadge" class="pill">Guardado en este navegador</div></header>
+<main>
+<div class="nav">
+<button id="navConfig" class="active" onclick="showPage('config')">Configuración</button>
+<button id="navHistory" class="secondary" onclick="showPage('history')">Historial</button>
+<button id="navWork" class="secondary hidden" onclick="showPage('work')">Horario editable</button>
+</div>
+<section id="pageConfig">
+<div class="panel">
+<h2>Parámetros de la semana</h2>
+<div class="grid">
+<div><label>Fecha del lunes</label><input id="weekDate" type="date"></div>
+<div><label>Tipo de semana</label><select id="weekType"><option value="40">Semana sin sábado · 40 horas</option><option value="42">Semana con sábado · 42 horas</option></select></div>
+<div><label>Trabajan sábado</label><select id="satMode"><option value="auto">Asignación automática rotativa</option><option value="manual">Seleccionar manualmente</option></select></div>
+<div><label>Nombre de la semana</label><input id="weekName" placeholder="Ej. Semana 42 - octubre"></div>
+</div>
+<div id="satPeopleBox" class="hidden" style="margin-top:12px"><label>Personas que trabajan sábado (separa nombres con coma)</label><input id="satPeople" placeholder="Escribe los nombres completos"></div>
+<div class="note" style="margin-top:14px">Turno 1 = temprano; turno 2 = tarde. La preferencia guardada se intentará respetar con mayor frecuencia, pero no prevalece sobre la cobertura ni sobre una modificación manual. Las seis sedes pueden asignarse; la cobertura mínima por perfil solo se intenta en las cuatro primeras.</div>
+</div>
+<div class="panel">
+<div class="section-title"><h2>Colaboradores y preferencias guardadas</h2><span class="muted">Puedes cambiar sede, horas, preferencia y foto.</span></div>
+<div id="peopleGroups"></div>
+<div class="actions"><button class="secondary" onclick="saveSettings()">Guardar configuración</button><button onclick="generateOptions()">Generar 3 opciones</button></div>
+</div>
+<div id="optionsPanel" class="panel hidden"><h2>Opciones generadas</h2><p class="muted">Selecciona una propuesta para abrirla en la tabla editable.</p><div id="options" class="results"></div></div>
+</section>
+<section id="pageWork" class="hidden">
+<div class="panel">
+<div class="section-title"><div><h2 id="workTitle">Horario editable</h2><div id="workSub" class="muted"></div></div><div class="actions" style="margin:0"><button class="secondary" onclick="exportCSV()">Exportar CSV para Excel</button><button onclick="saveCurrentToHistory()">Guardar en historial</button></div></div>
+<div class="note">Edita directamente las celdas de sede y turno. Para un cambio puntual, selecciona una persona en la lista de la derecha, define el día y el nuevo dato, y pulsa “Aplicar solo este cambio”.</div>
+<div class="workspace" style="margin-top:14px">
+<div><div class="tablewrap"><table id="scheduleTable" class="schedule"></table></div><div id="validation" style="margin-top:12px"></div></div>
+<aside class="panel sidebar"><h3>Edición manual puntual</h3><label>Colaborador</label><div id="personPicker"></div><div style="margin-top:12px"><label>Día que quieres cambiar</label><select id="manualDay"></select></div><div style="margin-top:10px"><label>Campo a cambiar</label><select id="manualField" onchange="toggleManualFields()"><option value="site">Sede</option><option value="shift">Turno</option><option value="both">Sede y turno</option><option value="rest">Marcar descanso</option></select></div><div id="manualSiteBox" style="margin-top:10px"><label>Nueva sede</label><select id="manualSite"></select></div><div id="manualShiftBox" style="margin-top:10px"><label>Nuevo turno</label><select id="manualShift"><option value="1">Turno 1 — temprano</option><option value="2">Turno 2 — tarde</option></select></div><button style="width:100%;margin-top:12px" onclick="applyManual()">Aplicar solo este cambio</button><p class="muted small">El cambio se aplica solo a la persona y al día seleccionados. El resto del horario no se vuelve a generar.</p><hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><button class="secondary" style="width:100%" onclick="showPage('config')">Volver a configuración</button></aside>
+</div></div>
+</section>
+<section id="pageHistory" class="hidden"><div class="panel"><div class="section-title"><h2>Historial de horarios</h2><button class="secondary" onclick="clearHistory()">Borrar historial</button></div><p class="muted">Las semanas guardadas se conservan en este navegador. Para verlas en otro computador, exporta los horarios y conserva el archivo.</p><div id="historyList"></div></div></section>
+</main>
+<script>
+const SITES=['Claustro USEB','Claustro Mezanine','Quinta de Mutis','Norte','Hospital Medery','Fundación Cardioinfantil'];
+const CORE=SITES.slice(0,4);
+const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const STAFF=[
+['aux','Cristian David Yagama Parra'],['aux','Jonnathan Cárdenas Rodríguez'],['aux','Ángela Marcela Rubiano Ardila'],['aux','Camilo Hernando Castañeda Reyes'],['aux','Luz Daniela Jiménez López'],['aux','John Alexander Rojas Delgado'],['aux','Nataly Yenn Pulgarín Becerra'],['aux','Wilmar Molina Garzón'],
+['info','Johanna Jeréz'],['info','Juan José Mateus Figuere​do'],['info','Yulieth Paola Castellar Manjarres'],['info','Sandra Herrera'],['info','René Julio Sumosa'],['info','Luis Gabriel García'],['info','Christian Luna'],
+['multi','Yesid Sanabria'],['multi','Milton García'],['multi','Luisa Sarmiento'],['multi','Tania Alvarado'],['multi','Diego Gómez'],['multi','Laura Quintero']
+].map((x,i)=>({id:'p'+i,role:x[0],name:x[1].replace('\u200b',''),hours:40,site:SITES[i%6],pref:(i%2?'2':'1'),photo:''}));
+const ROLE_LABEL={aux:'Auxiliares',info:'Asesores de información',multi:'Asesores de multimedia'};
+let staff=load('crai_staff',STAFF), history=load('crai_history',[]), current=null, selectedPerson=staff[0]?.id, optionSchedules=[];
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}}
+function persist(){localStorage.setItem('crai_staff',JSON.stringify(staff));localStorage.setItem('crai_history',JSON.stringify(history))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function initials(n){return n.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()}
+function siteOptions(v){return SITES.map(s=>`<option ${s===v?'selected':''}>${esc(s)}</option>`).join('')}
+function showPage(p){['config','history','work'].forEach(x=>document.getElementById('page'+x[0].toUpperCase()+x.slice(1)).classList.toggle('hidden',x!==p));['Config','History','Work'].forEach(x=>{let b=document.getElementById('nav'+x);b.classList.toggle('active',x.toLowerCase()===p);b.classList.toggle('secondary',x.toLowerCase()!==p)});if(p==='history')renderHistory();if(p==='work'&&current)renderSchedule()}
+function renderPeople(){let root=document.getElementById('peopleGroups');root.innerHTML='';['aux','info','multi'].forEach(role=>{let group=document.createElement('div');group.innerHTML=`<div class="section-title"><h3>${ROLE_LABEL[role]}</h3><span class="muted">${staff.filter(p=>p.role===role).length} personas</span></div><div class="people">${staff.filter(p=>p.role===role).map(p=>`<div class="person"><div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</div><div><div class="person-name">${esc(p.name)}</div><div class="person-controls"><div><label>Horas semanales</label><select onchange="updateStaff('${p.id}','hours',this.value)"><option value="40" ${p.hours==40?'selected':''}>40 horas</option><option value="42" ${p.hours==42?'selected':''}>42 horas</option></select></div><div><label>Sede habitual</label><select onchange="updateStaff('${p.id}','site',this.value)">${siteOptions(p.site)}</select></div><div><label>Preferencia habitual</label><select onchange="updateStaff('${p.id}','pref',this.value)"><option value="1" ${p.pref==='1'?'selected':''}>Turno 1 · temprano</option><option value="2" ${p.pref==='2'?'selected':''}>Turno 2 · tarde</option></select></div><div><label>Fotografía</label><input type="file" accept="image/*" onchange="uploadPhoto('${p.id}',this.files[0])"></div></div></div></div>`).join('')}</div>`;root.appendChild(group)})}
+function updateStaff(id,k,v){let p=staff.find(x=>x.id===id);if(p){p[k]=k==='hours'?Number(v):v;persist()}}
+function uploadPhoto(id,file){if(!file)return;let reader=new FileReader();reader.onload=()=>{let p=staff.find(x=>x.id===id);p.photo=reader.result;persist();renderPeople()};reader.readAsDataURL(file)}
+function saveSettings(){persist();let b=document.getElementById('savedBadge');b.textContent='Configuración guardada';setTimeout(()=>b.textContent='Guardado en este navegador',1800)}
+document.getElementById('satMode').addEventListener('change',()=>document.getElementById('satPeopleBox').classList.toggle('hidden',document.getElementById('satMode').value!=='manual'));
+function getWeekDays(){return document.getElementById('weekType').value==='42'?DAYS:DAYS.slice(0,5)}
+function shiftTimes(role,shift,withSat){if(role==='aux')return shift==='1'?['6:00 a. m.','2:00 p. m.']:withSat?['1:00 p. m.','9:00 p. m.']:['12:00 p. m.','9:00 p. m.'];return shift==='1'?['7:00 a. m.','3:00 p. m.']:withSat?['11:00 a. m.','7:00 p. m.']:['10:00 a. m.','7:00 p. m.']}
+function seededShuffle(a,seed){let x=a.slice(),n=seed+1;for(let i=x.length-1;i>0;i--){n=(n*9301+49297)%233280;let j=Math.floor((n/233280)*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+function makeSchedule(seed){let withSat=document.getElementById('weekType').value==='42',days=getWeekDays(),manualSat=document.getElementById('satMode').value==='manual'?document.getElementById('satPeople').value.toLowerCase().split(',').map(s=>s.trim()):null;
+let people=staff.map((p,i)=>({...p,days:{}}));let issues=[];
+days.forEach((day,di)=>{
+ let available=people.filter(p=>day!=='Sábado'||(manualSat?manualSat.some(n=>p.name.toLowerCase().includes(n)):((staff.findIndex(s=>s.id===p.id)+seed+di)%3!==0)));
+ let used=new Set();
+ // Guarantee coverage attempt for core sites: one per role/site, assign unique people.
+ ['aux','info','multi'].forEach(role=>CORE.forEach((site,si)=>{
+   let candidates=seededShuffle(available.filter(p=>p.role===role&&!used.has(p.id)),seed*31+di*11+si*3+role.length);
+   let chosen=candidates.find(p=>p.site===site)||candidates[0];
+   if(chosen){chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};used.add(chosen.id)}
+   else issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
+ }));
+ available.filter(p=>!used.has(p.id)).forEach((p,i)=>{let site=p.site;if(di===5&&!CORE.includes(site))site=CORE[(i+seed)%4];p.days[day]={site,shift:((Number(p.pref)+(seed+i+di)%3===0)?(p.pref==='1'?'2':'1'):p.pref),rest:false,manual:false}});
+ people.filter(p=>!available.some(a=>a.id===p.id)).forEach(p=>p.days[day]={site:'',shift:'',rest:true,manual:false});
+});
+return {id:'opt'+seed,seed,weekDate:document.getElementById('weekDate').value,weekName:document.getElementById('weekName').value||'Semana sin nombre',withSat,days,people,issues,created:new Date().toISOString(),label:`Opción ${seed+1}`}}
+function generateOptions(){saveSettings();optionSchedules=[0,1,2].map(i=>makeSchedule(i+Math.floor(Math.random()*100)));let box=document.getElementById('optionsPanel');box.classList.remove('hidden');document.getElementById('options').innerHTML=optionSchedules.map((s,i)=>`<div class="option"><h3>${s.label}<span class="pill">Propuesta</span></h3><div class="score">${s.days.length} días · ${s.people.length} colaboradores<br>${s.issues.length?`<span class="bad">${s.issues.length} alerta(s) de cobertura</span>`:'<span class="good">Cobertura principal asignada</span>'}</div><p class="muted">Distribución alternativa de sedes y turnos. Revisa las alertas antes de aprobar.</p><button onclick="chooseOption(${i})">Elegir esta opción</button></div>`).join('');box.scrollIntoView({behavior:'smooth'})}
+function chooseOption(i){current=JSON.parse(JSON.stringify(optionSchedules[i]));current.label=optionSchedules[i].label;selectedPerson=current.people[0]?.id;document.getElementById('navWork').classList.remove('hidden');showPage('work')}
+function renderSchedule(){if(!current)return;document.getElementById('workTitle').textContent=current.label+' — horario editable';document.getElementById('workSub').textContent=(current.weekName||'Semana')+' · '+(current.weekDate||'fecha no definida')+' · '+current.days.length+' días';let table=document.getElementById('scheduleTable');table.innerHTML=`<thead><tr><th>Colaborador</th>${current.days.map(d=>`<th colspan="3">${d}</th>`).join('')}</tr><tr><th>Sede / perfil</th>${current.days.map(()=>'<th>Sede</th><th>Inicio</th><th>Fin</th>').join('')}</tr></thead><tbody>${current.people.map(p=>`<tr><td><div style="display:flex;align-items:center;gap:8px">${p.photo?`<img src="${p.photo}" style="width:32px;height:32px;border-radius:50%;object-fit:cover">`:`<span class="avatar" style="width:32px;height:32px;min-width:32px;font-size:10px">${initials(p.name)}</span>`}<span><b>${esc(p.name)}</b><br><span class="muted small">${ROLE_LABEL[p.role]}</span></span></div></td>${current.days.map(day=>{let d=p.days[day];if(!d||d.rest)return `<td colspan="3" class="rest">Descanso</td>`;let times=shiftTimes(p.role,d.shift,current.withSat);return `<td class="sitecell"><select onchange="editCell('${p.id}','${day}','site',this.value)">${siteOptions(d.site)}</select>${d.manual?'<div class="small">Manual</div>':''}</td><td class="timecell">${times[0]}<br><select aria-label="Turno ${day}" onchange="editCell('${p.id}','${day}','shift',this.value)"><option value="1" ${d.shift==='1'?'selected':''}>Turno 1</option><option value="2" ${d.shift==='2'?'selected':''}>Turno 2</option></select></td><td class="timecell">${times[1]}</td>`}).join('')}</tr>`).join('')}</tbody>`;
+document.getElementById('manualDay').innerHTML=current.days.map(d=>`<option>${d}</option>`).join('');document.getElementById('manualSite').innerHTML=siteOptions(SITES[0]);renderPicker();renderValidation()}
+function editCell(id,day,field,value){let p=current.people.find(x=>x.id===id);if(!p.days[day])p.days[day]={site:p.site,shift:p.pref,rest:false};p.days[day][field]=value;p.days[day].manual=true;renderValidation()}
+function renderPicker(){let box=document.getElementById('personPicker');box.innerHTML=current.people.map(p=>`<button class="personpick ${p.id===selectedPerson?'selected':''}" onclick="selectPerson('${p.id}')"><span class="avatar">${p.photo?`<img src="${p.photo}">`:initials(p.name)}</span><span>${esc(p.name)}<br><small>${ROLE_LABEL[p.role]}</small></span></button>`).join('')}
+function selectPerson(id){selectedPerson=id;renderPicker()}
+function toggleManualFields(){let f=document.getElementById('manualField').value;document.getElementById('manualSiteBox').classList.toggle('hidden',!['site','both'].includes(f));document.getElementById('manualShiftBox').classList.toggle('hidden',!['shift','both'].includes(f))}
+function applyManual(){if(!selectedPerson||!current)return;let day=document.getElementById('manualDay').value,field=document.getElementById('manualField').value,p=current.people.find(x=>x.id===selectedPerson);if(!p.days[day])p.days[day]={site:p.site,shift:p.pref,rest:false};if(field==='rest')p.days[day]={site:'',shift:'',rest:true,manual:true};else{let d=p.days[day];d.rest=false;if(['site','both'].includes(field))d.site=document.getElementById('manualSite').value;if(['shift','both'].includes(field))d.shift=document.getElementById('manualShift').value;d.manual=true}renderSchedule()}
+function renderValidation(){let alerts=[];current.days.forEach(day=>CORE.forEach(site=>['aux','info','multi'].forEach(role=>{let count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&p.days[day].site===site).length;if(count===0)alerts.push(`${day}: falta ${ROLE_LABEL[role].toLowerCase()} en ${site}.`)})));let box=document.getElementById('validation');box.innerHTML=`<div class="panel"><h3>Validación de cobertura (solo las cuatro sedes principales)</h3>${alerts.length?`<p class="bad">${alerts.length} posible(s) incumplimiento(s)</p><ul>${alerts.slice(0,24).map(a=>`<li class="small">${esc(a)}</li>`).join('')}${alerts.length>24?'<li>Más alertas…</li>':''}</ul>`:'<p class="good">Las cuatro sedes principales tienen al menos una persona por perfil en cada día generado.</p>'}<p class="muted small">La cobertura se revisa por día y perfil, no por turno. Las horas deben verificarse según las reglas laborales aplicables.</p></div>`}
+function saveCurrentToHistory(){if(!current)return;let saved=JSON.parse(JSON.stringify(current));saved.id='hist'+Date.now();saved.savedAt=new Date().toISOString();history.unshift(saved);persist();document.getElementById('savedBadge').textContent='Horario guardado en historial';renderHistory();setTimeout(()=>document.getElementById('savedBadge').textContent='Guardado en este navegador',1800)}
+function renderHistory(){let box=document.getElementById('historyList');if(!history.length){box.innerHTML='<p class="muted">Todavía no hay semanas guardadas. Genera una propuesta y pulsa “Guardar en historial”.</p>';return}box.innerHTML=history.map((h,i)=>`<div class="histrow"><div><b>${esc(h.weekName||'Semana sin nombre')} · ${esc(h.label||'Horario')}</b><div class="muted">${esc(h.weekDate||'Sin fecha')} · ${h.days.length} días · Guardado ${new Date(h.savedAt||h.created).toLocaleString('es-CO')}</div></div><div class="actions" style="margin:0"><button onclick="openHistory(${i})">Abrir y editar</button><button class="secondary" onclick="downloadHistory(${i})">Descargar CSV</button></div></div>`).join('')}
+function openHistory(i){current=JSON.parse(JSON.stringify(history[i]));selectedPerson=current.people[0]?.id;document.getElementById('navWork').classList.remove('hidden');showPage('work')}
+function clearHistory(){if(!confirm('¿Seguro que quieres borrar todo el historial guardado en este navegador?'))return;history=[];persist();renderHistory()}
+function csvEscape(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+function exportCSV(){if(!current)return;let rows=[['Colaborador','Perfil',...current.days.flatMap(d=>[d+' - Sede',d+' - Inicio',d+' - Fin'])]];current.people.forEach(p=>{let row=[p.name,ROLE_LABEL[p.role]];current.days.forEach(day=>{let d=p.days[day];if(!d||d.rest)row.push('Descanso','','');else{let t=shiftTimes(p.role,d.shift,current.withSat);row.push(d.site,t[0],t[1])}});rows.push(row)});let csv='\ufeff'+rows.map(r=>r.map(csvEscape).join(';')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=(current.weekName||'horario-crai').replace(/[^\w\-]+/g,'_')+'.csv';a.click();URL.revokeObjectURL(a.href)}
+function downloadHistory(i){let old=current;current=JSON.parse(JSON.stringify(history[i]));exportCSV();current=old}
+document.getElementById('weekDate').value=(()=>{let d=new Date();let day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d.toISOString().slice(0,10)})();
+renderPeople();document.getElementById('manualSite').innerHTML=siteOptions(SITES[0]);
+</script>
+</body></html>
