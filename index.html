@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,7 +14,6 @@ header h1{font-size:24px;margin:0 0 5px}
 header p{margin:0;color:#d9edf5;font-size:13px}
 .header-left{display:flex;align-items:center;gap:14px}
 main{max-width:1600px;margin:auto;padding:20px}
-.nav{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
 button{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer;background:var(--blue);color:white}
 button.secondary{background:white;color:var(--navy);border:1px solid var(--line)}
 button.active{background:var(--navy);color:white}
@@ -26,8 +26,9 @@ h3{font-size:15px;margin:0 0 10px}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
 label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
 input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;background:white;color:var(--ink);font:inherit;font-size:13px}
-textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8px;padding:9px}
-.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.note{padding:11px 13px;background:#f0f8fb;border-left:4px solid var(--cyan);border-radius:7px;font-size:13px;line-height:1.5}
+.hidden{display:none!important}
 .people{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:10px}
 .person{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:start;margin-bottom:10px}
 .avatar{height:46px;width:46px;min-width:46px;border-radius:50%;background:#e2f2f7;color:var(--navy);display:grid;place-items:center;font-weight:800;border:1px solid #c9e7ef;overflow:hidden}
@@ -35,9 +36,7 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
 .person-name{font-weight:700;font-size:13px;margin:3px 0 5px}
 .person-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .person-controls .wide{grid-column:1/-1}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.note{padding:11px 13px;background:#f0f8fb;border-left:4px solid var(--cyan);border-radius:7px;font-size:13px;line-height:1.5}
-.hidden{display:none!important}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0}
 .results{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:12px}
 .option{border:1px solid var(--line);border-radius:12px;padding:14px;background:white}
 .option h3{display:flex;justify-content:space-between;gap:8px}
@@ -64,12 +63,10 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
 .histrow:last-child{border:0}
 .menu-wrap{position:relative}
 .menu-button{background:white;color:var(--navy);border:1px solid var(--line);font-size:14px}
-.menu-popover{position:absolute;left:0;top:calc(100% + 8px);width:min(370px,90vw);max-height:80vh;overflow:auto;z-index:50;background:white;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 12px 30px #17365d30}
+.menu-popover{position:absolute;left:0;top:calc(100% + 8px);width:min(300px,90vw);z-index:50;background:white;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 12px 30px #17365d30}
 .menu-link{display:block;width:100%;text-align:left;background:#f4f8fb;color:var(--navy);border:1px solid var(--line);margin:6px 0}
-.menu-section{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
-.menu-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.people,.results{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.sidebar{position:static;max-height:none}}
-@media(max-width:520px){main{padding:10px}.grid,.person-controls,.menu-fields{grid-template-columns:1fr}.person-controls .wide{grid-column:auto}header{padding:16px}.header-left{align-items:flex-start}.menu-popover{position:fixed;top:85px;left:10px;right:10px;width:auto}.histrow{align-items:flex-start;flex-direction:column}}
+@media(max-width:520px){main{padding:10px}.grid,.person-controls{grid-template-columns:1fr}.person-controls .wide{grid-column:auto}header{padding:16px}.header-left{align-items:flex-start}.menu-popover{position:fixed;top:85px;left:10px;right:10px;width:auto}.histrow{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -82,31 +79,6 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
         <button class="menu-link" onclick="showPage('config');toggleMainMenu(false)">Creación de horario</button>
         <button class="menu-link" onclick="showPage('preferences');toggleMainMenu(false)">Horario de preferencia</button>
         <button class="menu-link" onclick="showPage('history');toggleMainMenu(false)">Historial</button>
-        <div class="menu-section">
-          <h3>Creación de horario</h3>
-          <div class="menu-fields">
-            <div>
-              <label for="workflowSaturday">¿Trabajan sábado?</label>
-              <select id="workflowSaturday">
-                <option value="no">No</option>
-                <option value="si">Sí</option>
-              </select>
-            </div>
-            <div>
-              <label for="workflowType">Horario</label>
-              <select id="workflowType" onchange="toggleWorkflowTimes()">
-                <option value="habitual">Horario habitual</option>
-                <option value="distinto">Horario distinto</option>
-              </select>
-            </div>
-          </div>
-          <div id="workflowTimes" class="menu-fields hidden" style="margin-top:10px">
-            <div><label for="workflowStart">Inicio de horario</label><input type="time" id="workflowStart" value="08:00"></div>
-            <div><label for="workflowEnd">Finalización</label><input type="time" id="workflowEnd" value="17:00"></div>
-          </div>
-          <p class="muted">El horario habitual utiliza las preferencias guardadas. El horario distinto aplica el rango indicado como referencia general.</p>
-          <button onclick="applyMenuWorkflow();toggleMainMenu(false)">Aplicar a creación</button>
-        </div>
       </div>
     </div>
     <div>
@@ -118,33 +90,22 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
 </header>
 
 <main>
-  <div class="nav">
-    <button id="navConfig" class="active" onclick="showPage('config')">Creación de horario</button>
-    <button id="navPreferences" class="secondary" onclick="showPage('preferences')">Horario de preferencia</button>
-    <button id="navHistory" class="secondary" onclick="showPage('history')">Historial</button>
-    <button id="navWork" class="secondary hidden" onclick="showPage('work')">Horario editable</button>
-  </div>
-
   <section id="pageConfig">
     <div class="panel">
       <h2>Parámetros de la semana</h2>
       <div class="grid">
         <div><label for="weekDate">Fecha del lunes</label><input id="weekDate" type="date"></div>
         <div><label for="weekType">Tipo de semana</label><select id="weekType"><option value="40">Semana sin sábado · 40 horas</option><option value="42">Semana con sábado · 42 horas</option></select></div>
-        <div><label for="satMode">Asignación del sábado</label><select id="satMode"><option value="auto">Automática rotativa</option><option value="manual">Seleccionar manualmente</option></select></div>
         <div><label for="weekName">Nombre de la semana</label><input id="weekName" placeholder="Ej. Semana 42 - octubre"></div>
+        <div><label>Colaboradores habilitados para sábado</label><div id="saturdayCount" style="padding:10px;border:1px solid #cbd6df;border-radius:8px;font-size:13px">0 personas</div></div>
       </div>
-      <div id="satPeopleBox" class="hidden" style="margin-top:12px">
-        <label for="satPeople">Personas que trabajan sábado (separa nombres con coma)</label>
-        <input id="satPeople" placeholder="Escribe nombres o fragmentos de nombres">
-      </div>
-      <div class="note" style="margin-top:14px">Turno 1 = temprano; turno 2 = tarde. La preferencia guardada se intentará respetar. La cobertura mínima por perfil se intenta en Claustro USEB, Claustro Mezanine, Quinta de Mutis y Norte. Revisa las alertas antes de aprobar el horario.</div>
-      <div class="actions"><button onclick="applyMenuWorkflow()">Aplicar opciones del menú</button></div>
+      <div class="note" style="margin-top:14px">En la lista de colaboradores puedes indicar individualmente quién trabaja el sábado. Para generar una semana con sábado, selecciona «Semana con sábado». Turno 1 = temprano; turno 2 = tarde. La cobertura por perfil se intenta en las cuatro sedes principales.</div>
     </div>
+
     <div class="panel">
       <div class="section-title">
-        <h2>Resumen de colaboradores</h2>
-        <span class="muted">Administra nombres, perfiles y preferencias desde el menú Horario de preferencia.</span>
+        <h2>Colaboradores y preferencias guardadas</h2>
+        <span class="muted">Puedes cambiar sede, horas, turno, fotografía y disponibilidad del sábado.</span>
       </div>
       <div id="peopleGroups"></div>
       <div class="actions">
@@ -152,6 +113,7 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
         <button onclick="generateOptions()">Generar 3 opciones</button>
       </div>
     </div>
+
     <div id="optionsPanel" class="panel hidden">
       <h2>Opciones generadas</h2>
       <p class="muted">Selecciona una propuesta para abrirla en la tabla editable.</p>
@@ -164,7 +126,7 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
       <div class="section-title">
         <div>
           <h2>Horario de preferencia</h2>
-          <p class="muted">Los datos guardados aquí serán la base para generar las propuestas semanales.</p>
+          <p class="muted">La información guardada aquí se utiliza como base para generar los horarios.</p>
         </div>
         <button onclick="addPerson()">＋ Agregar otra persona</button>
       </div>
@@ -195,8 +157,7 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8
           <h3>Edición manual puntual</h3>
           <label>Colaborador</label><div id="personPicker"></div>
           <div style="margin-top:12px"><label for="manualDay">Día</label><select id="manualDay"></select></div>
-          <div style="margin-top:10px">
-            <label for="manualField">Campo a cambiar</label>
+          <div style="margin-top:10px"><label for="manualField">Campo a cambiar</label>
             <select id="manualField" onchange="toggleManualFields()">
               <option value="site">Sede</option><option value="shift">Turno</option><option value="both">Sede y turno</option><option value="rest">Marcar descanso</option>
             </select>
@@ -230,36 +191,47 @@ const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 const ROLE_LABEL={aux:'Auxiliares',info:'Asesores de información',multi:'Asesores de multimedia'};
 
 const DEFAULT_STAFF=[
- {id:'p1',role:'aux',name:'Cristian David Yagama Parra',hours:40,site:SITES[0],pref:'1',photo:''},
- {id:'p2',role:'aux',name:'Jonnathan Cárdenas Rodríguez',hours:40,site:SITES[1],pref:'2',photo:''},
- {id:'p3',role:'aux',name:'Ángela Marcela Rubiano Ardila',hours:40,site:SITES[2],pref:'1',photo:''},
- {id:'p4',role:'aux',name:'Camilo Hernando Castañeda Reyes',hours:40,site:SITES[3],pref:'2',photo:''},
- {id:'p5',role:'aux',name:'Luz Daniela Jiménez López',hours:40,site:SITES[0],pref:'1',photo:''},
- {id:'p6',role:'aux',name:'John Alexander Rojas Delgado',hours:40,site:SITES[1],pref:'2',photo:''},
- {id:'p7',role:'aux',name:'Nataly Yenn Pulgarín Becerra',hours:40,site:SITES[2],pref:'1',photo:''},
- {id:'p8',role:'aux',name:'Wilmar Molina Garzón',hours:40,site:SITES[3],pref:'2',photo:''},
- {id:'p9',role:'info',name:'Johanna Jeréz',hours:40,site:SITES[0],pref:'1',photo:''},
- {id:'p10',role:'info',name:'Juan José Mateus Figueredo',hours:40,site:SITES[1],pref:'2',photo:''},
- {id:'p11',role:'info',name:'Yulieth Paola Castellar Manjarres',hours:40,site:SITES[2],pref:'1',photo:''},
- {id:'p12',role:'info',name:'Sandra Herrera',hours:40,site:SITES[3],pref:'2',photo:''},
- {id:'p13',role:'info',name:'René Julio Sumosa',hours:40,site:SITES[0],pref:'1',photo:''},
- {id:'p14',role:'info',name:'Luis Gabriel García',hours:40,site:SITES[1],pref:'2',photo:''},
- {id:'p15',role:'info',name:'Christian Luna',hours:40,site:SITES[2],pref:'1',photo:''},
- {id:'p16',role:'multi',name:'Yesid Sanabria',hours:40,site:SITES[0],pref:'1',photo:''},
- {id:'p17',role:'multi',name:'Milton García',hours:40,site:SITES[1],pref:'2',photo:''},
- {id:'p18',role:'multi',name:'Luisa Sarmiento',hours:40,site:SITES[2],pref:'1',photo:''},
- {id:'p19',role:'multi',name:'Tania Alvarado',hours:40,site:SITES[3],pref:'2',photo:''},
- {id:'p20',role:'multi',name:'Diego Gómez',hours:40,site:SITES[0],pref:'1',photo:''},
- {id:'p21',role:'multi',name:'Laura Quintero',hours:40,site:SITES[1],pref:'2',photo:''}
+{id:'p1',role:'aux',name:'Cristian David Yagama Parra',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false},
+{id:'p2',role:'aux',name:'Jonnathan Cárdenas Rodríguez',hours:40,site:SITES[1],pref:'2',photo:'',worksSaturday:false},
+{id:'p3',role:'aux',name:'Ángela Marcela Rubiano Ardila',hours:40,site:SITES[2],pref:'1',photo:'',worksSaturday:false},
+{id:'p4',role:'aux',name:'Camilo Hernando Castañeda Reyes',hours:40,site:SITES[3],pref:'2',photo:'',worksSaturday:false},
+{id:'p5',role:'aux',name:'Luz Daniela Jiménez López',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false},
+{id:'p6',role:'aux',name:'John Alexander Rojas Delgado',hours:40,site:SITES[1],pref:'2',photo:'',worksSaturday:false},
+{id:'p7',role:'aux',name:'Nataly Yenn Pulgarín Becerra',hours:40,site:SITES[2],pref:'1',photo:'',worksSaturday:false},
+{id:'p8',role:'aux',name:'Wilmar Molina Garzón',hours:40,site:SITES[3],pref:'2',photo:'',worksSaturday:false},
+{id:'p9',role:'info',name:'Johanna Jeréz',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false},
+{id:'p10',role:'info',name:'Juan José Mateus Figueredo',hours:40,site:SITES[1],pref:'2',photo:'',worksSaturday:false},
+{id:'p11',role:'info',name:'Yulieth Paola Castellar Manjarres',hours:40,site:SITES[2],pref:'1',photo:'',worksSaturday:false},
+{id:'p12',role:'info',name:'Sandra Herrera',hours:40,site:SITES[3],pref:'2',photo:'',worksSaturday:false},
+{id:'p13',role:'info',name:'René Julio Sumosa',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false},
+{id:'p14',role:'info',name:'Luis Gabriel García',hours:40,site:SITES[1],pref:'2',photo:'',worksSaturday:false},
+{id:'p15',role:'info',name:'Christian Luna',hours:40,site:SITES[2],pref:'1',photo:'',worksSaturday:false},
+{id:'p16',role:'multi',name:'Yesid Sanabria',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false},
+{id:'p17',role:'multi',name:'Milton García',hours:40,site:SITES[1],pref:'2',photo:'',worksSaturday:false},
+{id:'p18',role:'multi',name:'Luisa Sarmiento',hours:40,site:SITES[2],pref:'1',photo:'',worksSaturday:false},
+{id:'p19',role:'multi',name:'Tania Alvarado',hours:40,site:SITES[3],pref:'2',photo:'',worksSaturday:false},
+{id:'p20',role:'multi',name:'Diego Gómez',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false},
+{id:'p21',role:'multi',name:'Laura Quintero',hours:40,site:SITES[1],pref:'2',photo:'',worksSaturday:false}
 ];
 
-function load(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function load(key,fallback){
+  try{
+    const v=localStorage.getItem(key);
+    return v?JSON.parse(v):fallback;
+  }catch(e){return fallback}
+}
 let staff=load('crai_staff',DEFAULT_STAFF);
 let history=load('crai_history',[]);
 let current=null;
 let selectedPerson=staff[0]?.id||null;
 let optionSchedules=[];
-let workflow={saturday:'no',type:'habitual',start:'08:00',end:'17:00'};
+
+// Migra los datos guardados por la versión anterior y añade la disponibilidad del sábado.
+staff=staff.map((p,i)=>({
+  ...DEFAULT_STAFF.find(d=>d.id===p.id),
+  ...p,
+  worksSaturday:typeof p.worksSaturday==='boolean'?p.worksSaturday:false
+}));
 
 function persist(){
   try{
@@ -271,63 +243,60 @@ function persist(){
     return false;
   }
 }
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function initials(name){return String(name||'?').split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase()}
-function siteOptions(value){return SITES.map(s=>`<option value="${esc(s)}" ${s===value?'selected':''}>${esc(s)}</option>`).join('')}
-function roleOptions(value){return Object.entries(ROLE_LABEL).map(([k,v])=>`<option value="${k}" ${value===k?'selected':''}>${v}</option>`).join('')}
-
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function initials(name){
+  return String(name||'?').split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+}
+function siteOptions(value){
+  return SITES.map(s=>`<option value="${esc(s)}" ${s===value?'selected':''}>${esc(s)}</option>`).join('');
+}
+function roleOptions(value){
+  return Object.entries(ROLE_LABEL).map(([k,v])=>`<option value="${k}" ${value===k?'selected':''}>${v}</option>`).join('');
+}
 function toggleMainMenu(force){
   const menu=document.getElementById('mainMenu');
   const open=typeof force==='boolean'?force:menu.classList.contains('hidden');
   menu.classList.toggle('hidden',!open);
   document.getElementById('mainMenuButton').setAttribute('aria-expanded',String(open));
 }
-function toggleWorkflowTimes(){
-  document.getElementById('workflowTimes').classList.toggle('hidden',document.getElementById('workflowType').value!=='distinto');
-}
-function applyMenuWorkflow(){
-  workflow={
-    saturday:document.getElementById('workflowSaturday').value,
-    type:document.getElementById('workflowType').value,
-    start:document.getElementById('workflowStart').value,
-    end:document.getElementById('workflowEnd').value
-  };
-  document.getElementById('weekType').value=workflow.saturday==='si'?'42':'40';
-  if(workflow.saturday==='si')document.getElementById('satMode').value='auto';
-  saveSettings();
-}
 function showPage(page){
   ['config','preferences','history','work'].forEach(p=>{
     document.getElementById('page'+p[0].toUpperCase()+p.slice(1)).classList.toggle('hidden',p!==page);
   });
-  ['Config','Preferences','History','Work'].forEach(n=>{
-    const b=document.getElementById('nav'+n);
-    if(b){b.classList.toggle('active',n.toLowerCase()===page);b.classList.toggle('secondary',n.toLowerCase()!==page)}
-  });
   if(page==='preferences')renderPreferences();
   if(page==='history')renderHistory();
   if(page==='work'&&current)renderSchedule();
+}
+function updateSaturdayCount(){
+  const count=staff.filter(p=>p.worksSaturday).length;
+  document.getElementById('saturdayCount').textContent=count+' persona(s) habilitada(s)';
 }
 function renderPeople(){
   const root=document.getElementById('peopleGroups');
   root.innerHTML='';
   ['aux','info','multi'].forEach(role=>{
     const group=document.createElement('div');
-    group.innerHTML=`<div class="section-title"><h3>${ROLE_LABEL[role]}</h3><span class="muted">${staff.filter(p=>p.role===role).length} personas</span></div><div class="people">${staff.filter(p=>p.role===role).map(p=>`
-      <div class="person">
-        <div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</div>
-        <div>
-          <div class="person-name">${esc(p.name)}</div>
-          <div class="person-controls">
-            <div><label>Horas semanales</label><select onchange="updateStaff('${p.id}','hours',this.value)"><option value="40" ${p.hours==40?'selected':''}>40 horas</option><option value="42" ${p.hours==42?'selected':''}>42 horas</option></select></div>
-            <div><label>Sede habitual</label><select onchange="updateStaff('${p.id}','site',this.value)">${siteOptions(p.site)}</select></div>
-            <div><label>Turno preferido</label><select onchange="updateStaff('${p.id}','pref',this.value)"><option value="1" ${p.pref==='1'?'selected':''}>Turno 1 · temprano</option><option value="2" ${p.pref==='2'?'selected':''}>Turno 2 · tarde</option></select></div>
-            <div><label>Fotografía</label><input type="file" accept="image/*" onchange="uploadPhoto('${p.id}',this.files[0])"></div>
+    group.innerHTML=`
+      <div class="section-title"><h3>${ROLE_LABEL[role]}</h3><span class="muted">${staff.filter(p=>p.role===role).length} personas</span></div>
+      <div class="people">${staff.filter(p=>p.role===role).map(p=>`
+        <div class="person">
+          <div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</div>
+          <div>
+            <div class="person-name">${esc(p.name)}</div>
+            <div class="person-controls">
+              <div><label>Horas semanales</label><select onchange="updateStaff('${p.id}','hours',this.value)"><option value="40" ${p.hours==40?'selected':''}>40 horas</option><option value="42" ${p.hours==42?'selected':''}>42 horas</option></select></div>
+              <div><label>Sede habitual</label><select onchange="updateStaff('${p.id}','site',this.value)">${siteOptions(p.site)}</select></div>
+              <div><label>Turno preferido</label><select onchange="updateStaff('${p.id}','pref',this.value)"><option value="1" ${p.pref==='1'?'selected':''}>Turno 1 · temprano</option><option value="2" ${p.pref==='2'?'selected':''}>Turno 2 · tarde</option></select></div>
+              <div><label>¿Trabaja sábado?</label><select onchange="updateStaff('${p.id}','worksSaturday',this.value==='si')"><option value="no" ${p.worksSaturday?'':'selected'}>No</option><option value="si" ${p.worksSaturday?'selected':''}>Sí</option></select></div>
+              <div class="wide"><label>Fotografía</label><input type="file" accept="image/*" onchange="uploadPhoto('${p.id}',this.files[0])"></div>
+            </div>
           </div>
-        </div>
-      </div>`).join('')}</div>`;
+        </div>`).join('')}</div>`;
     root.appendChild(group);
   });
+  updateSaturdayCount();
 }
 function renderPreferences(){
   const root=document.getElementById('preferencePeople');
@@ -351,30 +320,41 @@ function renderPreferences(){
     </div>`).join('');
 }
 function updateStaff(id,key,value){
-  const p=staff.find(x=>x.id===id);if(!p)return;
+  const p=staff.find(x=>x.id===id);
+  if(!p)return;
   p[key]=key==='hours'?Number(value):value;
   persist();
+  renderPeople();
 }
 function updatePerson(id,key,value){
-  const p=staff.find(x=>x.id===id);if(!p)return;
+  const p=staff.find(x=>x.id===id);
+  if(!p)return;
   p[key]=key==='hours'?Number(value):value;
-  persist();renderPreferences();renderPeople();
+  persist();
+  renderPreferences();
+  renderPeople();
 }
 function addPerson(){
   const id='p'+Date.now();
-  staff.push({id,role:'aux',name:'Nueva persona',hours:40,site:SITES[0],pref:'1',photo:''});
-  persist();renderPreferences();renderPeople();
+  staff.push({id,role:'aux',name:'Nueva persona',hours:40,site:SITES[0],pref:'1',photo:'',worksSaturday:false});
+  persist();
+  renderPreferences();
+  renderPeople();
 }
 function removePerson(id){
-  const p=staff.find(x=>x.id===id);if(!p)return;
+  const p=staff.find(x=>x.id===id);
+  if(!p)return;
   if(!confirm(`¿Eliminar a ${p.name} de la lista de colaboradores?`))return;
   staff=staff.filter(x=>x.id!==id);
   if(selectedPerson===id)selectedPerson=staff[0]?.id||null;
-  persist();renderPreferences();renderPeople();
+  persist();
+  renderPreferences();
+  renderPeople();
 }
 function savePreferences(){
   if(persist()){
-    renderPeople();renderPreferences();
+    renderPeople();
+    renderPreferences();
     document.getElementById('savedBadge').textContent='Preferencias guardadas';
     setTimeout(()=>document.getElementById('savedBadge').textContent='Guardado en este navegador',1800);
   }
@@ -386,23 +366,25 @@ function uploadPhoto(id,file){
   const reader=new FileReader();
   reader.onload=()=>{
     const p=staff.find(x=>x.id===id);
-    if(p){p.photo=reader.result;persist();renderPeople();renderPreferences()}
+    if(p){
+      p.photo=reader.result;
+      persist();
+      renderPeople();
+      renderPreferences();
+    }
   };
   reader.readAsDataURL(file);
 }
 function saveSettings(){
-  persist();
-  document.getElementById('savedBadge').textContent='Configuración guardada';
-  setTimeout(()=>document.getElementById('savedBadge').textContent='Guardado en este navegador',1800);
+  if(persist()){
+    document.getElementById('savedBadge').textContent='Configuración guardada';
+    setTimeout(()=>document.getElementById('savedBadge').textContent='Guardado en este navegador',1800);
+  }
 }
-
-document.getElementById('satMode').addEventListener('change',()=>{
-  document.getElementById('satPeopleBox').classList.toggle('hidden',document.getElementById('satMode').value!=='manual');
-});
-
-function getWeekDays(){return document.getElementById('weekType').value==='42'?DAYS:DAYS.slice(0,5)}
-function shiftTimes(role,shift,withSat,person){
-  if(workflow.type==='distinto'&&workflow.start&&workflow.end)return [workflow.start,workflow.end];
+function getWeekDays(){
+  return document.getElementById('weekType').value==='42'?DAYS:DAYS.slice(0,5);
+}
+function shiftTimes(role,shift,withSat){
   if(role==='aux'){
     if(shift==='1')return withSat?['6:00 a. m.','2:00 p. m.']:['6:00 a. m.','3:00 p. m.'];
     return withSat?['1:00 p. m.','9:00 p. m.']:['12:00 p. m.','9:00 p. m.'];
@@ -412,68 +394,82 @@ function shiftTimes(role,shift,withSat,person){
 }
 function seededShuffle(array,seed){
   const a=array.slice();let n=seed+1;
-  for(let i=a.length-1;i>0;i--){n=(n*9301+49297)%233280;const j=Math.floor((n/233280)*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  for(let i=a.length-1;i>0;i--){
+    n=(n*9301+49297)%233280;
+    const j=Math.floor((n/233280)*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
   return a;
 }
 function makeSchedule(seed){
   const withSat=document.getElementById('weekType').value==='42';
   const days=getWeekDays();
-  const manualSat=document.getElementById('satMode').value==='manual'
-    ?document.getElementById('satPeople').value.toLowerCase().split(',').map(s=>s.trim()).filter(Boolean):null;
   const people=staff.map(p=>({...p,days:{}}));
   const issues=[];
   days.forEach((day,di)=>{
-    const available=people.filter(p=>day!=='Sábado'||(
-      manualSat?manualSat.some(n=>p.name.toLowerCase().includes(n)):
-      ((staff.findIndex(s=>s.id===p.id)+seed+di)%3!==0)
-    ));
+    const available=people.filter(p=>day!=='Sábado'||p.worksSaturday===true);
     const used=new Set();
-    ['aux','info','multi'].forEach(role=>CORE.forEach((site,si)=>{
-      const candidates=seededShuffle(available.filter(p=>p.role===role&&!used.has(p.id)),seed*31+di*11+si*3+role.length);
-      const chosen=candidates.find(p=>p.site===site)||candidates[0];
-      if(chosen){
-        chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};
-        used.add(chosen.id);
-      }else{
-        issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
-      }
-    }));
+
+    ['aux','info','multi'].forEach(role=>{
+      CORE.forEach((site,si)=>{
+        const candidates=seededShuffle(
+          available.filter(p=>p.role===role&&!used.has(p.id)),
+          seed*31+di*11+si*3+role.length
+        );
+        const chosen=candidates.find(p=>p.site===site)||candidates[0];
+        if(chosen){
+          chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};
+          used.add(chosen.id);
+        }else{
+          issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
+        }
+      });
+    });
+
     available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
       const site=p.site||CORE[(i+seed)%4];
-      const shift=p.pref;
-      p.days[day]={site,shift,rest:false,manual:false};
+      p.days[day]={site,shift:p.pref,rest:false,manual:false};
     });
+
     people.filter(p=>!available.some(a=>a.id===p.id)).forEach(p=>{
       p.days[day]={site:'',shift:'',rest:true,manual:false};
     });
   });
+
+  if(withSat){
+    const satCount=staff.filter(p=>p.worksSaturday).length;
+    if(satCount===0)issues.push('No hay personas habilitadas para trabajar el sábado. Ve a Creación de horario y marca Sí en las personas correspondientes.');
+  }
+
   return {
-    id:'opt'+seed,seed,weekDate:document.getElementById('weekDate').value,
+    id:'opt'+seed,seed,
+    weekDate:document.getElementById('weekDate').value,
     weekName:document.getElementById('weekName').value||'Semana sin nombre',
     withSat,days,people,issues,created:new Date().toISOString(),
-    label:`Opción ${seed+1}`,workflow:{...workflow}
+    label:`Opción ${seed+1}`
   };
 }
 function generateOptions(){
   if(!staff.length){alert('Agrega al menos una persona en Horario de preferencia.');return}
-  applyMenuWorkflow();
+  if(document.getElementById('weekType').value==='42'&&!staff.some(p=>p.worksSaturday)){
+    alert('Seleccionaste una semana con sábado, pero ninguna persona está habilitada para trabajar ese día. Marca «Sí» junto a los colaboradores correspondientes.');
+    return;
+  }
   optionSchedules=[0,1,2].map(i=>makeSchedule(i+Math.floor(Math.random()*100)));
-  const box=document.getElementById('optionsPanel');
-  box.classList.remove('hidden');
+  document.getElementById('optionsPanel').classList.remove('hidden');
   document.getElementById('options').innerHTML=optionSchedules.map((s,i)=>`
     <div class="option">
       <h3>${s.label}<span class="pill">Propuesta</span></h3>
       <div class="score">${s.days.length} días · ${s.people.length} colaboradores<br>
       ${s.issues.length?`<span class="bad">${s.issues.length} alerta(s) de cobertura</span>`:'<span class="good">Cobertura principal asignada</span>'}</div>
-      <p class="muted">Horario: ${s.workflow.type==='habitual'?'habitual':'distinto, '+s.workflow.start+'–'+s.workflow.end}.</p>
+      <p class="muted">${s.withSat?'Semana con sábado':'Semana sin sábado'}</p>
       <button onclick="chooseOption(${i})">Elegir esta opción</button>
     </div>`).join('');
-  box.scrollIntoView({behavior:'smooth'});
+  document.getElementById('optionsPanel').scrollIntoView({behavior:'smooth'});
 }
 function chooseOption(index){
   current=JSON.parse(JSON.stringify(optionSchedules[index]));
   selectedPerson=current.people[0]?.id||null;
-  document.getElementById('navWork').classList.remove('hidden');
   showPage('work');
 }
 function renderSchedule(){
@@ -481,34 +477,43 @@ function renderSchedule(){
   document.getElementById('workTitle').textContent=current.label+' — horario editable';
   document.getElementById('workSub').textContent=(current.weekName||'Semana')+' · '+(current.weekDate||'fecha no definida')+' · '+current.days.length+' días';
   const table=document.getElementById('scheduleTable');
-  table.innerHTML=`<thead><tr><th>Colaborador</th>${current.days.map(d=>`<th colspan="3">${d}</th>`).join('')}</tr>
-  <tr><th>Perfil</th>${current.days.map(()=>'<th>Sede</th><th>Inicio / turno</th><th>Fin</th>').join('')}</tr></thead>
-  <tbody>${current.people.map(p=>`<tr><td><div style="display:flex;align-items:center;gap:8px">
-  ${p.photo?`<img src="${p.photo}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover">`:`<span class="avatar" style="width:32px;height:32px;min-width:32px;font-size:10px">${initials(p.name)}</span>`}
-  <span><b>${esc(p.name)}</b><br><span class="muted small">${ROLE_LABEL[p.role]||p.role}</span></span></div></td>
-  ${current.days.map(day=>{
-    const d=p.days[day];
-    if(!d||d.rest)return '<td colspan="3" class="rest">Descanso</td>';
-    const t=shiftTimes(p.role,d.shift,current.withSat,p);
-    return `<td class="sitecell"><select onchange="editCell('${p.id}','${day}','site',this.value)">${siteOptions(d.site)}</select>${d.manual?'<div class="small">Manual</div>':''}</td>
-    <td class="timecell">${t[0]}<br><select aria-label="Turno ${day}" onchange="editCell('${p.id}','${day}','shift',this.value)"><option value="1" ${d.shift==='1'?'selected':''}>Turno 1</option><option value="2" ${d.shift==='2'?'selected':''}>Turno 2</option></select></td>
-    <td class="timecell">${t[1]}</td>`;
-  }).join('')}</tr>`).join('')}</tbody>`;
+  table.innerHTML=`<thead>
+    <tr><th>Colaborador</th>${current.days.map(d=>`<th colspan="3">${d}</th>`).join('')}</tr>
+    <tr><th>Perfil</th>${current.days.map(()=>'<th>Sede</th><th>Inicio / turno</th><th>Fin</th>').join('')}</tr>
+    </thead>
+    <tbody>${current.people.map(p=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px">
+      ${p.photo?`<img src="${p.photo}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover">`:`<span class="avatar" style="width:32px;height:32px;min-width:32px;font-size:10px">${initials(p.name)}</span>`}
+      <span><b>${esc(p.name)}</b><br><span class="muted small">${ROLE_LABEL[p.role]||p.role}</span></span></div></td>
+      ${current.days.map(day=>{
+        const d=p.days[day];
+        if(!d||d.rest)return '<td colspan="3" class="rest">Descanso</td>';
+        const t=shiftTimes(p.role,d.shift,current.withSat);
+        return `<td class="sitecell"><select onchange="editCell('${p.id}','${day}','site',this.value)">${siteOptions(d.site)}</select>${d.manual?'<div class="small">Manual</div>':''}</td>
+        <td class="timecell">${t[0]}<br><select aria-label="Turno ${day}" onchange="editCell('${p.id}','${day}','shift',this.value)"><option value="1" ${d.shift==='1'?'selected':''}>Turno 1</option><option value="2" ${d.shift==='2'?'selected':''}>Turno 2</option></select></td>
+        <td class="timecell">${t[1]}</td>`;
+      }).join('')}
+    </tr>`).join('')}</tbody>`;
   document.getElementById('manualDay').innerHTML=current.days.map(d=>`<option>${d}</option>`).join('');
   document.getElementById('manualSite').innerHTML=siteOptions(SITES[0]);
-  renderPicker();renderValidation();
+  renderPicker();
+  renderValidation();
 }
 function editCell(id,day,field,value){
-  const p=current.people.find(x=>x.id===id);if(!p)return;
+  const p=current.people.find(x=>x.id===id);
+  if(!p)return;
   if(!p.days[day])p.days[day]={site:p.site,shift:p.pref,rest:false};
-  p.days[day][field]=value;p.days[day].manual=true;
+  p.days[day][field]=value;
+  p.days[day].rest=false;
+  p.days[day].manual=true;
   renderSchedule();
 }
 function renderPicker(){
   document.getElementById('personPicker').innerHTML=current.people.map(p=>`
     <button class="personpick ${p.id===selectedPerson?'selected':''}" onclick="selectPerson('${p.id}')">
-    <span class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</span>
-    <span>${esc(p.name)}<br><small>${ROLE_LABEL[p.role]||p.role}</small></span></button>`).join('');
+      <span class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</span>
+      <span>${esc(p.name)}<br><small>${ROLE_LABEL[p.role]||p.role}</small></span>
+    </button>`).join('');
 }
 function selectPerson(id){selectedPerson=id;renderPicker()}
 function toggleManualFields(){
@@ -520,11 +525,14 @@ function applyManual(){
   if(!selectedPerson||!current)return;
   const day=document.getElementById('manualDay').value;
   const field=document.getElementById('manualField').value;
-  const p=current.people.find(x=>x.id===selectedPerson);if(!p)return;
+  const p=current.people.find(x=>x.id===selectedPerson);
+  if(!p)return;
   if(!p.days[day])p.days[day]={site:p.site,shift:p.pref,rest:false};
-  if(field==='rest')p.days[day]={site:'',shift:'',rest:true,manual:true};
-  else{
-    const d=p.days[day];d.rest=false;
+  if(field==='rest'){
+    p.days[day]={site:'',shift:'',rest:true,manual:true};
+  }else{
+    const d=p.days[day];
+    d.rest=false;
     if(['site','both'].includes(field))d.site=document.getElementById('manualSite').value;
     if(['shift','both'].includes(field))d.shift=document.getElementById('manualShift').value;
     d.manual=true;
@@ -544,42 +552,57 @@ function renderValidation(){
 function weekHasEnded(h){
   if(!h.weekDate)return false;
   const start=new Date(h.weekDate+'T12:00:00');
-  const end=new Date(start);end.setDate(end.getDate()+(h.withSat?5:4));end.setHours(23,59,59,999);
+  const end=new Date(start);
+  end.setDate(end.getDate()+(h.withSat?5:4));
+  end.setHours(23,59,59,999);
   return Date.now()>end.getTime();
 }
 function saveCurrentToHistory(){
   if(!current)return;
   const saved=JSON.parse(JSON.stringify(current));
-  saved.id='hist'+Date.now();saved.savedAt=new Date().toISOString();saved.locked=false;
+  saved.id='hist'+Date.now();
+  saved.savedAt=new Date().toISOString();
   history.unshift(saved);
-  if(persist()){renderHistory();alert('Horario guardado en el historial. Al terminar la semana quedará bloqueado para edición.');}
+  if(persist()){
+    renderHistory();
+    alert('Horario guardado en el historial. Al terminar la semana quedará bloqueado para edición.');
+  }
 }
 function renderHistory(){
   const box=document.getElementById('historyList');
-  if(!history.length){box.innerHTML='<p class="muted">Todavía no hay semanas guardadas. Genera una propuesta y pulsa “Guardar en historial”.</p>';return}
+  if(!history.length){
+    box.innerHTML='<p class="muted">Todavía no hay semanas guardadas. Genera una propuesta y pulsa “Guardar en historial”.</p>';
+    return;
+  }
   box.innerHTML=history.map((h,i)=>{
     const locked=Boolean(h.locked)||weekHasEnded(h);
-    return `<div class="histrow"><div><b>${esc(h.weekName||'Semana sin nombre')} · ${esc(h.label||'Horario')}</b>
-    <div class="muted">${esc(h.weekDate||'Sin fecha')} · ${h.days.length} días · ${locked?'CERRADO: solo consulta':'Disponible para edición'}</div></div>
-    <div class="actions" style="margin:0">
-    <button onclick="openHistory(${i})">${locked?'Consultar':'Abrir y editar'}</button>
-    <button class="secondary" onclick="downloadHistory(${i})">Descargar CSV</button></div></div>`;
+    return `<div class="histrow">
+      <div><b>${esc(h.weekName||'Semana sin nombre')} · ${esc(h.label||'Horario')}</b>
+      <div class="muted">${esc(h.weekDate||'Sin fecha')} · ${h.days.length} días · ${locked?'CERRADO: solo consulta':'Disponible para edición'}</div></div>
+      <div class="actions" style="margin:0">
+        <button onclick="openHistory(${i})">${locked?'Consultar':'Abrir y editar'}</button>
+        <button class="secondary" onclick="downloadHistory(${i})">Descargar CSV</button>
+      </div>
+    </div>`;
   }).join('');
 }
 function openHistory(index){
   const h=history[index];
   if(Boolean(h.locked)||weekHasEnded(h)){
-    alert('Esta semana ya finalizó. El horario está bloqueado para edición en esta aplicación; puedes consultarlo o descargarlo.');
+    alert('Esta semana ya finalizó. El horario está bloqueado para edición desde esta aplicación; puedes consultarlo o descargarlo.');
+    current=JSON.parse(JSON.stringify(h));
+    showPage('work');
     return;
   }
   current=JSON.parse(JSON.stringify(h));
   selectedPerson=current.people[0]?.id||null;
-  document.getElementById('navWork').classList.remove('hidden');
   showPage('work');
 }
 function clearHistory(){
   if(!confirm('¿Seguro que quieres borrar todo el historial guardado en este navegador?'))return;
-  history=[];persist();renderHistory();
+  history=[];
+  persist();
+  renderHistory();
 }
 function csvEscape(value){return '"'+String(value??'').replace(/"/g,'""')+'"'}
 function exportCSV(){
@@ -590,31 +613,46 @@ function exportCSV(){
     current.days.forEach(day=>{
       const d=p.days[day];
       if(!d||d.rest)row.push('Descanso','','');
-      else{const t=shiftTimes(p.role,d.shift,current.withSat,p);row.push(d.site,t[0],t[1])}
+      else{
+        const t=shiftTimes(p.role,d.shift,current.withSat);
+        row.push(d.site,t[0],t[1]);
+      }
     });
     rows.push(row);
   });
   const csv='\ufeff'+rows.map(r=>r.map(csvEscape).join(';')).join('\r\n');
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  const a=document.createElement('a');a.href=url;
+  const a=document.createElement('a');
+  a.href=url;
   a.download=(current.weekName||'horario-crai').replace(/[^\w\-]+/g,'_')+'.csv';
-  a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function downloadHistory(index){
-  const old=current;
+  const previous=current;
   current=JSON.parse(JSON.stringify(history[index]));
-  exportCSV();current=old;
+  exportCSV();
+  current=previous;
 }
 
 document.getElementById('weekDate').value=(()=>{
-  const d=new Date();const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);
+  const d=new Date();
+  const day=(d.getDay()+6)%7;
+  d.setDate(d.getDate()-day);
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 })();
-document.getElementById('workflowSaturday').addEventListener('change',()=>{
-  document.getElementById('weekType').value=document.getElementById('workflowSaturday').value==='si'?'42':'40';
+
+document.getElementById('weekType').addEventListener('change',()=>{
+  if(document.getElementById('weekType').value==='42'&&!staff.some(p=>p.worksSaturday)){
+    document.getElementById('savedBadge').textContent='Selecciona quién trabaja sábado';
+  }else{
+    document.getElementById('savedBadge').textContent='Guardado en este navegador';
+  }
 });
+
 renderPeople();
 document.getElementById('manualSite').innerHTML=siteOptions(SITES[0]);
+persist();
 </script>
 </body>
 </html>
