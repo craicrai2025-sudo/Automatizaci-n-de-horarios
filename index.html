@@ -99,13 +99,13 @@ input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;b
         <div><label for="weekName">Nombre de la semana</label><input id="weekName" placeholder="Ej. Semana 42 - octubre"></div>
         <div><label>Colaboradores habilitados para sábado</label><div id="saturdayCount" style="padding:10px;border:1px solid #cbd6df;border-radius:8px;font-size:13px">0 personas</div></div>
       </div>
-      <div class="note" style="margin-top:14px">En la lista de colaboradores puedes indicar individualmente quién trabaja el sábado. Para generar una semana con sábado, selecciona «Semana con sábado». Turno 1 = temprano; turno 2 = tarde. La cobertura por perfil se intenta en las cuatro sedes principales.</div>
+      <div class="note" style="margin-top:14px">En la lista de colaboradores puedes indicar individualmente quién trabaja el sábado. Para generar una semana con sábado, selecciona «Semana con sábado». Turno 1 = temprano; turno 2 = tarde. De lunes a viernes se intenta cubrir las cuatro sedes principales. El sábado, entre Claustro USEB y Claustro Mezanine combinadas, debe haber al menos un auxiliar, un asesor de información y un asesor de multimedia.</div>
     </div>
 
     <div class="panel">
       <div class="section-title">
         <h2>Colaboradores y preferencias guardadas</h2>
-        <span class="muted">Puedes cambiar sede, horas, turno, fotografía y disponibilidad del sábado.</span>
+        <span class="muted">La fotografía y los datos personales se administran en Horario de preferencia; aquí solo eliges disponibilidad para el sábado y preferencias de generación.</span>
       </div>
       <div id="peopleGroups"></div>
       <div class="actions">
@@ -290,7 +290,6 @@ function renderPeople(){
               <div><label>Sede habitual</label><select onchange="updateStaff('${p.id}','site',this.value)">${siteOptions(p.site)}</select></div>
               <div><label>Turno preferido</label><select onchange="updateStaff('${p.id}','pref',this.value)"><option value="1" ${p.pref==='1'?'selected':''}>Turno 1 · temprano</option><option value="2" ${p.pref==='2'?'selected':''}>Turno 2 · tarde</option></select></div>
               <div><label>¿Trabaja sábado?</label><select onchange="updateStaff('${p.id}','worksSaturday',this.value==='si')"><option value="no" ${p.worksSaturday?'':'selected'}>No</option><option value="si" ${p.worksSaturday?'selected':''}>Sí</option></select></div>
-              <div class="wide"><label>Fotografía</label><input type="file" accept="image/*" onchange="uploadPhoto('${p.id}',this.files[0])"></div>
             </div>
           </div>
         </div>`).join('')}</div>`;
@@ -410,26 +409,50 @@ function makeSchedule(seed){
     const available=people.filter(p=>day!=='Sábado'||p.worksSaturday===true);
     const used=new Set();
 
-    ['aux','info','multi'].forEach(role=>{
-      CORE.forEach((site,si)=>{
+    if(day==='Sábado'){
+      // Cobertura conjunta entre Claustro USEB y Claustro Mezanine.
+      ['aux','info','multi'].forEach((role,ri)=>{
         const candidates=seededShuffle(
           available.filter(p=>p.role===role&&!used.has(p.id)),
-          seed*31+di*11+si*3+role.length
+          seed*31+di*11+ri*17+role.length
         );
-        const chosen=candidates.find(p=>p.site===site)||candidates[0];
+        const preferred=candidates.find(p=>p.site===SITES[0]||p.site===SITES[1]);
+        const chosen=preferred||candidates[0];
         if(chosen){
+          const site=(chosen.site===SITES[0]||chosen.site===SITES[1])
+            ?chosen.site
+            :(ri%2===0?SITES[0]:SITES[1]);
           chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};
           used.add(chosen.id);
         }else{
-          issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
+          issues.push(`Sábado: no hay personal habilitado de ${ROLE_LABEL[role].toLowerCase()} para cubrir Claustro USEB / Claustro Mezanine.`);
         }
       });
-    });
-
-    available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
-      const site=p.site||CORE[(i+seed)%4];
-      p.days[day]={site,shift:p.pref,rest:false,manual:false};
-    });
+      available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
+        const site=(p.site===SITES[0]||p.site===SITES[1])?p.site:(i%2===0?SITES[0]:SITES[1]);
+        p.days[day]={site,shift:p.pref,rest:false,manual:false};
+      });
+    }else{
+      ['aux','info','multi'].forEach(role=>{
+        CORE.forEach((site,si)=>{
+          const candidates=seededShuffle(
+            available.filter(p=>p.role===role&&!used.has(p.id)),
+            seed*31+di*11+si*3+role.length
+          );
+          const chosen=candidates.find(p=>p.site===site)||candidates[0];
+          if(chosen){
+            chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};
+            used.add(chosen.id);
+          }else{
+            issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
+          }
+        });
+      });
+      available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
+        const site=p.site||CORE[(i+seed)%4];
+        p.days[day]={site,shift:p.pref,rest:false,manual:false};
+      });
+    }
 
     people.filter(p=>!available.some(a=>a.id===p.id)).forEach(p=>{
       p.days[day]={site:'',shift:'',rest:true,manual:false};
@@ -437,8 +460,11 @@ function makeSchedule(seed){
   });
 
   if(withSat){
-    const satCount=staff.filter(p=>p.worksSaturday).length;
-    if(satCount===0)issues.push('No hay personas habilitadas para trabajar el sábado. Ve a Creación de horario y marca Sí en las personas correspondientes.');
+    ['aux','info','multi'].forEach(role=>{
+      if(!staff.some(p=>p.worksSaturday&&p.role===role)){
+        issues.push(`Sábado: habilita al menos una persona de ${ROLE_LABEL[role].toLowerCase()}.`);
+      }
+    });
   }
 
   return {
@@ -451,9 +477,12 @@ function makeSchedule(seed){
 }
 function generateOptions(){
   if(!staff.length){alert('Agrega al menos una persona en Horario de preferencia.');return}
-  if(document.getElementById('weekType').value==='42'&&!staff.some(p=>p.worksSaturday)){
-    alert('Seleccionaste una semana con sábado, pero ninguna persona está habilitada para trabajar ese día. Marca «Sí» junto a los colaboradores correspondientes.');
-    return;
+  if(document.getElementById('weekType').value==='42'){
+    const missing=['aux','info','multi'].filter(role=>!staff.some(p=>p.worksSaturday&&p.role===role));
+    if(missing.length){
+      alert('Para generar el sábado y cumplir la cobertura conjunta de Claustro USEB y Claustro Mezanine, habilita al menos una persona de cada perfil: '+missing.map(r=>ROLE_LABEL[r].toLowerCase()).join(', ')+'.');
+      return;
+    }
   }
   optionSchedules=[0,1,2].map(i=>makeSchedule(i+Math.floor(Math.random()*100)));
   document.getElementById('optionsPanel').classList.remove('hidden');
@@ -541,13 +570,22 @@ function applyManual(){
 }
 function renderValidation(){
   const alerts=[];
-  current.days.forEach(day=>CORE.forEach(site=>['aux','info','multi'].forEach(role=>{
-    const count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&p.days[day].site===site).length;
-    if(count===0)alerts.push(`${day}: falta ${ROLE_LABEL[role].toLowerCase()} en ${site}.`);
-  })));
+  current.days.forEach(day=>{
+    if(day==='Sábado'){
+      ['aux','info','multi'].forEach(role=>{
+        const count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&[SITES[0],SITES[1]].includes(p.days[day].site)).length;
+        if(count<1)alerts.push(`Sábado: falta al menos un perfil de ${ROLE_LABEL[role].toLowerCase()} entre Claustro USEB y Claustro Mezanine.`);
+      });
+    }else{
+      CORE.forEach(site=>['aux','info','multi'].forEach(role=>{
+        const count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&p.days[day].site===site).length;
+        if(count===0)alerts.push(`${day}: falta ${ROLE_LABEL[role].toLowerCase()} en ${site}.`);
+      }));
+    }
+  });
   document.getElementById('validation').innerHTML=`<div class="panel"><h3>Validación de cobertura</h3>
-  ${alerts.length?`<p class="bad">${alerts.length} posible(s) incumplimiento(s)</p><ul>${alerts.slice(0,30).map(a=>`<li class="small">${esc(a)}</li>`).join('')}</ul>`:'<p class="good">Las cuatro sedes principales tienen al menos una persona por perfil en cada día.</p>'}
-  <p class="muted small">La validación revisa presencia por perfil y sede. Comprueba las horas y descansos antes de aprobar la propuesta.</p></div>`;
+  ${alerts.length?`<p class="bad">${alerts.length} posible(s) incumplimiento(s)</p><ul>${alerts.slice(0,35).map(a=>`<li class="small">${esc(a)}</li>`).join('')}</ul>`:'<p class="good">Se cumplen las reglas mínimas de cobertura por perfil y sede.</p>'}
+  <p class="muted small">De lunes a viernes se revisa cada una de las cuatro sedes principales. El sábado se revisa conjuntamente Claustro USEB y Claustro Mezanine, sin exigir los tres perfiles en cada sede.</p></div>`;
 }
 function weekHasEnded(h){
   if(!h.weekDate)return false;
