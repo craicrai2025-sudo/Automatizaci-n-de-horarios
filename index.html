@@ -31,6 +31,16 @@ input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;b
 .hidden{display:none!important}
 .people{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:10px}
 .person{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:start;margin-bottom:10px}
+.person.role-aux{background:#fffdf2;border-color:#f0e5b8}
+.person.role-info{background:#f3f9ff;border-color:#cfe2f5}
+.person.role-multi{background:#fff6f5;border-color:#f1d4d1}
+.role-legend{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 14px;font-size:12px;color:var(--muted)}
+.role-legend span{display:inline-flex;align-items:center;gap:6px}
+.role-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.role-dot.aux{background:#f0df8a}
+.role-dot.info{background:#9dc9f0}
+.role-dot.multi{background:#e9aaa5}
+.week-controls{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;padding:12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
 .avatar{height:46px;width:46px;min-width:46px;border-radius:50%;background:#e2f2f7;color:var(--navy);display:grid;place-items:center;font-weight:800;border:1px solid #c9e7ef;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .person-name{font-weight:700;font-size:13px;margin:3px 0 5px}
@@ -65,8 +75,8 @@ input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;b
 .menu-button{background:white;color:var(--navy);border:1px solid var(--line);font-size:14px}
 .menu-popover{position:absolute;left:0;top:calc(100% + 8px);width:min(300px,90vw);z-index:50;background:white;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 12px 30px #17365d30}
 .menu-link{display:block;width:100%;text-align:left;background:#f4f8fb;color:var(--navy);border:1px solid var(--line);margin:6px 0}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.people,.results{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.sidebar{position:static;max-height:none}}
-@media(max-width:520px){main{padding:10px}.grid,.person-controls{grid-template-columns:1fr}.person-controls .wide{grid-column:auto}header{padding:16px}.header-left{align-items:flex-start}.menu-popover{position:fixed;top:85px;left:10px;right:10px;width:auto}.histrow{align-items:flex-start;flex-direction:column}}
+@media(max-width:900px){.grid,.week-controls{grid-template-columns:repeat(2,minmax(130px,1fr))}.people,.results{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.sidebar{position:static;max-height:none}}
+@media(max-width:520px){main{padding:10px}.grid,.week-controls,.person-controls{grid-template-columns:1fr}.person-controls .wide{grid-column:auto}header{padding:16px}.header-left{align-items:flex-start}.menu-popover{position:fixed;top:85px;left:10px;right:10px;width:auto}.histrow{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -92,21 +102,18 @@ input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;b
 <main>
   <section id="pageConfig">
     <div class="panel">
-      <h2>Parámetros de la semana</h2>
-      <div class="grid">
+      <div class="week-controls">
         <div><label for="weekDate">Fecha del lunes</label><input id="weekDate" type="date"></div>
         <div><label for="weekType">Tipo de semana</label><select id="weekType"><option value="40">Semana sin sábado · 40 horas</option><option value="42">Semana con sábado · 42 horas</option></select></div>
         <div><label for="weekName">Nombre de la semana</label><input id="weekName" placeholder="Ej. Semana 42 - octubre"></div>
-        <div><label>Colaboradores habilitados para sábado</label><div id="saturdayCount" style="padding:10px;border:1px solid #cbd6df;border-radius:8px;font-size:13px">0 personas</div></div>
+        <div><label>Personas habilitadas para sábado</label><div id="saturdayCount" style="padding:10px;border:1px solid #cbd6df;border-radius:8px;font-size:13px;background:white">0 personas</div></div>
       </div>
-      <div class="note" style="margin-top:14px">En la lista de colaboradores puedes indicar individualmente quién trabaja el sábado. Para generar una semana con sábado, selecciona «Semana con sábado». Turno 1 = temprano; turno 2 = tarde. De lunes a viernes se intenta cubrir las cuatro sedes principales. El sábado, entre Claustro USEB y Claustro Mezanine combinadas, debe haber al menos un auxiliar, un asesor de información y un asesor de multimedia.</div>
-    </div>
-
-    <div class="panel">
+      <div class="note" style="margin-bottom:16px">Marca individualmente quién trabaja el sábado. Para generar una semana con sábado, selecciona «Semana con sábado». Puedes elegir los turnos habituales o los nuevos turnos intermedios.</div>
       <div class="section-title">
         <h2>Colaboradores y preferencias guardadas</h2>
-        <span class="muted">La fotografía y los datos personales se administran en Horario de preferencia; aquí solo eliges disponibilidad para el sábado y preferencias de generación.</span>
+        <span class="muted">Puedes cambiar sede, horas, turno y disponibilidad del sábado.</span>
       </div>
+      <div class="role-legend"><span><i class="role-dot aux"></i>Auxiliares</span><span><i class="role-dot info"></i>Asesores de información</span><span><i class="role-dot multi"></i>Asesores de multimedia</span></div>
       <div id="peopleGroups"></div>
       <div class="actions">
         <button class="secondary" onclick="saveSettings()">Guardar configuración</button>
@@ -163,7 +170,7 @@ input,select{width:100%;border:1px solid #cbd6df;border-radius:8px;padding:9px;b
             </select>
           </div>
           <div id="manualSiteBox" style="margin-top:10px"><label for="manualSite">Nueva sede</label><select id="manualSite"></select></div>
-          <div id="manualShiftBox" style="margin-top:10px"><label for="manualShift">Nuevo turno</label><select id="manualShift"><option value="1">Turno 1 — temprano</option><option value="2">Turno 2 — tarde</option></select></div>
+          <div id="manualShiftBox" style="margin-top:10px"><label for="manualShift">Nuevo turno</label><select id="manualShift"></select></div>
           <button style="width:100%;margin-top:12px" onclick="applyManual()">Aplicar solo este cambio</button>
           <p class="muted small">Los cambios manuales no regeneran el resto del horario.</p>
           <hr style="border:0;border-top:1px solid var(--line);margin:15px 0">
@@ -226,8 +233,7 @@ let current=null;
 let selectedPerson=staff[0]?.id||null;
 let optionSchedules=[];
 
-// Migra los datos guardados por la versión anterior y añade la disponibilidad del sábado.
-staff=staff.map((p,i)=>({
+staff=staff.map(p=>({
   ...DEFAULT_STAFF.find(d=>d.id===p.id),
   ...p,
   worksSaturday:typeof p.worksSaturday==='boolean'?p.worksSaturday:false
@@ -237,9 +243,13 @@ function persist(){
   try{
     localStorage.setItem('crai_staff',JSON.stringify(staff));
     localStorage.setItem('crai_history',JSON.stringify(history));
+    const badge=document.getElementById('savedBadge');
+    if(badge)badge.textContent='Guardado en este navegador';
     return true;
   }catch(e){
-    alert('No fue posible guardar los datos. Puede que las fotografías ocupen demasiado espacio. Intenta usar imágenes más pequeñas.');
+    const badge=document.getElementById('savedBadge');
+    if(badge)badge.textContent='No se pudo guardar';
+    alert('El navegador no pudo guardar todos los datos. Es posible que se haya alcanzado el límite de almacenamiento, especialmente por las fotografías. Reduce el tamaño de las imágenes o exporta los horarios importantes. Los datos se guardan solo en este navegador y dispositivo.');
     return false;
   }
 }
@@ -254,6 +264,10 @@ function siteOptions(value){
 }
 function roleOptions(value){
   return Object.entries(ROLE_LABEL).map(([k,v])=>`<option value="${k}" ${value===k?'selected':''}>${v}</option>`).join('');
+}
+function shiftOptions(value){
+  const options=[['1','Turno 1 · temprano'],['2','Turno 2 · tarde'],['inter1','Intermedio 1 · 7:00 a. m. a 4:00 p. m.'],['inter2','Intermedio 2 · 10:00 a. m. a 7:00 p. m.']];
+  return options.map(([v,label])=>`<option value="${v}" ${String(value)===v?'selected':''}>${label}</option>`).join('');
 }
 function toggleMainMenu(force){
   const menu=document.getElementById('mainMenu');
@@ -281,14 +295,14 @@ function renderPeople(){
     group.innerHTML=`
       <div class="section-title"><h3>${ROLE_LABEL[role]}</h3><span class="muted">${staff.filter(p=>p.role===role).length} personas</span></div>
       <div class="people">${staff.filter(p=>p.role===role).map(p=>`
-        <div class="person">
+        <div class="person role-${p.role}">
           <div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</div>
           <div>
             <div class="person-name">${esc(p.name)}</div>
             <div class="person-controls">
               <div><label>Horas semanales</label><select onchange="updateStaff('${p.id}','hours',this.value)"><option value="40" ${p.hours==40?'selected':''}>40 horas</option><option value="42" ${p.hours==42?'selected':''}>42 horas</option></select></div>
               <div><label>Sede habitual</label><select onchange="updateStaff('${p.id}','site',this.value)">${siteOptions(p.site)}</select></div>
-              <div><label>Turno preferido</label><select onchange="updateStaff('${p.id}','pref',this.value)"><option value="1" ${p.pref==='1'?'selected':''}>Turno 1 · temprano</option><option value="2" ${p.pref==='2'?'selected':''}>Turno 2 · tarde</option></select></div>
+              <div><label>Turno preferido</label><select onchange="updateStaff('${p.id}','pref',this.value)">${shiftOptions(p.pref)}</select></div>
               <div><label>¿Trabaja sábado?</label><select onchange="updateStaff('${p.id}','worksSaturday',this.value==='si')"><option value="no" ${p.worksSaturday?'':'selected'}>No</option><option value="si" ${p.worksSaturday?'selected':''}>Sí</option></select></div>
             </div>
           </div>
@@ -300,7 +314,7 @@ function renderPeople(){
 function renderPreferences(){
   const root=document.getElementById('preferencePeople');
   root.innerHTML=staff.map(p=>`
-    <div class="person">
+    <div class="person role-${p.role}">
       <div class="avatar">${p.photo?`<img src="${p.photo}" alt="">`:initials(p.name)}</div>
       <div>
         <div class="person-controls">
@@ -308,7 +322,7 @@ function renderPreferences(){
           <div><label>Perfil</label><select onchange="updatePerson('${p.id}','role',this.value)">${roleOptions(p.role)}</select></div>
           <div><label>Horas semanales</label><select onchange="updatePerson('${p.id}','hours',this.value)"><option value="40" ${p.hours==40?'selected':''}>40 horas</option><option value="42" ${p.hours==42?'selected':''}>42 horas</option></select></div>
           <div><label>Sede habitual</label><select onchange="updatePerson('${p.id}','site',this.value)">${siteOptions(p.site)}</select></div>
-          <div><label>Turno preferido</label><select onchange="updatePerson('${p.id}','pref',this.value)"><option value="1" ${p.pref==='1'?'selected':''}>Turno 1 · temprano</option><option value="2" ${p.pref==='2'?'selected':''}>Turno 2 · tarde</option></select></div>
+          <div><label>Turno preferido</label><select onchange="updatePerson('${p.id}','pref',this.value)">${shiftOptions(p.pref)}</select></div>
           <div class="wide"><label>Fotografía</label><input type="file" accept="image/*" onchange="uploadPhoto('${p.id}',this.files[0])"></div>
         </div>
         <div class="actions">
@@ -321,15 +335,17 @@ function renderPreferences(){
 function updateStaff(id,key,value){
   const p=staff.find(x=>x.id===id);
   if(!p)return;
+  const previous=p[key];
   p[key]=key==='hours'?Number(value):value;
-  persist();
+  if(!persist())p[key]=previous;
   renderPeople();
 }
 function updatePerson(id,key,value){
   const p=staff.find(x=>x.id===id);
   if(!p)return;
+  const previous=p[key];
   p[key]=key==='hours'?Number(value):value;
-  persist();
+  if(!persist())p[key]=previous;
   renderPreferences();
   renderPeople();
 }
@@ -361,17 +377,37 @@ function savePreferences(){
 function uploadPhoto(id,file){
   if(!file)return;
   if(!file.type.startsWith('image/')){alert('Selecciona un archivo de imagen.');return}
-  if(file.size>500000){alert('La imagen debe pesar menos de 500 KB.');return}
   const reader=new FileReader();
   reader.onload=()=>{
-    const p=staff.find(x=>x.id===id);
-    if(p){
-      p.photo=reader.result;
-      persist();
-      renderPeople();
-      renderPreferences();
-    }
+    const img=new Image();
+    img.onload=()=>{
+      const maxSide=320;
+      const scale=Math.min(1,maxSide/Math.max(img.width,img.height));
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.max(1,Math.round(img.width*scale));
+      canvas.height=Math.max(1,Math.round(img.height*scale));
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      const compressed=canvas.toDataURL('image/jpeg',0.72);
+      const p=staff.find(x=>x.id===id);
+      if(p){
+        const oldPhoto=p.photo;
+        p.photo=compressed;
+        if(persist()){
+          renderPeople();
+          renderPreferences();
+          document.getElementById('savedBadge').textContent='Fotografía guardada';
+        }else{
+          p.photo=oldPhoto;
+          renderPeople();
+          renderPreferences();
+        }
+      }
+    };
+    img.onerror=()=>alert('No fue posible procesar esta imagen. Prueba con otra fotografía.');
+    img.src=reader.result;
   };
+  reader.onerror=()=>alert('No fue posible leer el archivo de imagen.');
   reader.readAsDataURL(file);
 }
 function saveSettings(){
@@ -384,6 +420,8 @@ function getWeekDays(){
   return document.getElementById('weekType').value==='42'?DAYS:DAYS.slice(0,5);
 }
 function shiftTimes(role,shift,withSat){
+  if(shift==='inter1')return ['7:00 a. m.','4:00 p. m.'];
+  if(shift==='inter2')return ['10:00 a. m.','7:00 p. m.'];
   if(role==='aux'){
     if(shift==='1')return withSat?['6:00 a. m.','2:00 p. m.']:['6:00 a. m.','3:00 p. m.'];
     return withSat?['1:00 p. m.','9:00 p. m.']:['12:00 p. m.','9:00 p. m.'];
@@ -408,65 +446,30 @@ function makeSchedule(seed){
   days.forEach((day,di)=>{
     const available=people.filter(p=>day!=='Sábado'||p.worksSaturday===true);
     const used=new Set();
-
-    if(day==='Sábado'){
-      // Cobertura conjunta entre Claustro USEB y Claustro Mezanine.
-      ['aux','info','multi'].forEach((role,ri)=>{
-        const candidates=seededShuffle(
-          available.filter(p=>p.role===role&&!used.has(p.id)),
-          seed*31+di*11+ri*17+role.length
-        );
-        const preferred=candidates.find(p=>p.site===SITES[0]||p.site===SITES[1]);
-        const chosen=preferred||candidates[0];
+    ['aux','info','multi'].forEach(role=>{
+      CORE.forEach((site,si)=>{
+        const candidates=seededShuffle(available.filter(p=>p.role===role&&!used.has(p.id)),seed*31+di*11+si*3+role.length);
+        const chosen=candidates.find(p=>p.site===site)||candidates[0];
         if(chosen){
-          const site=(chosen.site===SITES[0]||chosen.site===SITES[1])
-            ?chosen.site
-            :(ri%2===0?SITES[0]:SITES[1]);
           chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};
           used.add(chosen.id);
         }else{
-          issues.push(`Sábado: no hay personal habilitado de ${ROLE_LABEL[role].toLowerCase()} para cubrir Claustro USEB / Claustro Mezanine.`);
+          issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
         }
       });
-      available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
-        const site=(p.site===SITES[0]||p.site===SITES[1])?p.site:(i%2===0?SITES[0]:SITES[1]);
-        p.days[day]={site,shift:p.pref,rest:false,manual:false};
-      });
-    }else{
-      ['aux','info','multi'].forEach(role=>{
-        CORE.forEach((site,si)=>{
-          const candidates=seededShuffle(
-            available.filter(p=>p.role===role&&!used.has(p.id)),
-            seed*31+di*11+si*3+role.length
-          );
-          const chosen=candidates.find(p=>p.site===site)||candidates[0];
-          if(chosen){
-            chosen.days[day]={site,shift:chosen.pref,rest:false,manual:false};
-            used.add(chosen.id);
-          }else{
-            issues.push(`${day}: no hay ${ROLE_LABEL[role].toLowerCase()} disponible para ${site}.`);
-          }
-        });
-      });
-      available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
-        const site=p.site||CORE[(i+seed)%4];
-        p.days[day]={site,shift:p.pref,rest:false,manual:false};
-      });
-    }
-
+    });
+    available.filter(p=>!used.has(p.id)).forEach((p,i)=>{
+      const site=p.site||CORE[(i+seed)%4];
+      p.days[day]={site,shift:p.pref,rest:false,manual:false};
+    });
     people.filter(p=>!available.some(a=>a.id===p.id)).forEach(p=>{
       p.days[day]={site:'',shift:'',rest:true,manual:false};
     });
   });
-
   if(withSat){
-    ['aux','info','multi'].forEach(role=>{
-      if(!staff.some(p=>p.worksSaturday&&p.role===role)){
-        issues.push(`Sábado: habilita al menos una persona de ${ROLE_LABEL[role].toLowerCase()}.`);
-      }
-    });
+    const satCount=staff.filter(p=>p.worksSaturday).length;
+    if(satCount===0)issues.push('No hay personas habilitadas para trabajar el sábado.');
   }
-
   return {
     id:'opt'+seed,seed,
     weekDate:document.getElementById('weekDate').value,
@@ -477,12 +480,9 @@ function makeSchedule(seed){
 }
 function generateOptions(){
   if(!staff.length){alert('Agrega al menos una persona en Horario de preferencia.');return}
-  if(document.getElementById('weekType').value==='42'){
-    const missing=['aux','info','multi'].filter(role=>!staff.some(p=>p.worksSaturday&&p.role===role));
-    if(missing.length){
-      alert('Para generar el sábado y cumplir la cobertura conjunta de Claustro USEB y Claustro Mezanine, habilita al menos una persona de cada perfil: '+missing.map(r=>ROLE_LABEL[r].toLowerCase()).join(', ')+'.');
-      return;
-    }
+  if(document.getElementById('weekType').value==='42'&&!staff.some(p=>p.worksSaturday)){
+    alert('Seleccionaste una semana con sábado, pero ninguna persona está habilitada para trabajar ese día. Marca «Sí» junto a los colaboradores correspondientes.');
+    return;
   }
   optionSchedules=[0,1,2].map(i=>makeSchedule(i+Math.floor(Math.random()*100)));
   document.getElementById('optionsPanel').classList.remove('hidden');
@@ -510,7 +510,7 @@ function renderSchedule(){
     <tr><th>Colaborador</th>${current.days.map(d=>`<th colspan="3">${d}</th>`).join('')}</tr>
     <tr><th>Perfil</th>${current.days.map(()=>'<th>Sede</th><th>Inicio / turno</th><th>Fin</th>').join('')}</tr>
     </thead>
-    <tbody>${current.people.map(p=>`<tr>
+    <tbody>${current.people.map(p=>`<tr style="background:${p.role==='aux'?'#fffdf2':p.role==='info'?'#f3f9ff':'#fff6f5'}">
       <td><div style="display:flex;align-items:center;gap:8px">
       ${p.photo?`<img src="${p.photo}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover">`:`<span class="avatar" style="width:32px;height:32px;min-width:32px;font-size:10px">${initials(p.name)}</span>`}
       <span><b>${esc(p.name)}</b><br><span class="muted small">${ROLE_LABEL[p.role]||p.role}</span></span></div></td>
@@ -519,12 +519,13 @@ function renderSchedule(){
         if(!d||d.rest)return '<td colspan="3" class="rest">Descanso</td>';
         const t=shiftTimes(p.role,d.shift,current.withSat);
         return `<td class="sitecell"><select onchange="editCell('${p.id}','${day}','site',this.value)">${siteOptions(d.site)}</select>${d.manual?'<div class="small">Manual</div>':''}</td>
-        <td class="timecell">${t[0]}<br><select aria-label="Turno ${day}" onchange="editCell('${p.id}','${day}','shift',this.value)"><option value="1" ${d.shift==='1'?'selected':''}>Turno 1</option><option value="2" ${d.shift==='2'?'selected':''}>Turno 2</option></select></td>
+        <td class="timecell">${t[0]}<br><select aria-label="Turno ${day}" onchange="editCell('${p.id}','${day}','shift',this.value)">${shiftOptions(d.shift)}</select></td>
         <td class="timecell">${t[1]}</td>`;
       }).join('')}
     </tr>`).join('')}</tbody>`;
   document.getElementById('manualDay').innerHTML=current.days.map(d=>`<option>${d}</option>`).join('');
   document.getElementById('manualSite').innerHTML=siteOptions(SITES[0]);
+  document.getElementById('manualShift').innerHTML=shiftOptions('1');
   renderPicker();
   renderValidation();
 }
@@ -570,22 +571,13 @@ function applyManual(){
 }
 function renderValidation(){
   const alerts=[];
-  current.days.forEach(day=>{
-    if(day==='Sábado'){
-      ['aux','info','multi'].forEach(role=>{
-        const count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&[SITES[0],SITES[1]].includes(p.days[day].site)).length;
-        if(count<1)alerts.push(`Sábado: falta al menos un perfil de ${ROLE_LABEL[role].toLowerCase()} entre Claustro USEB y Claustro Mezanine.`);
-      });
-    }else{
-      CORE.forEach(site=>['aux','info','multi'].forEach(role=>{
-        const count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&p.days[day].site===site).length;
-        if(count===0)alerts.push(`${day}: falta ${ROLE_LABEL[role].toLowerCase()} en ${site}.`);
-      }));
-    }
-  });
+  current.days.forEach(day=>CORE.forEach(site=>['aux','info','multi'].forEach(role=>{
+    const count=current.people.filter(p=>p.role===role&&p.days[day]&&!p.days[day].rest&&p.days[day].site===site).length;
+    if(count===0)alerts.push(`${day}: falta ${ROLE_LABEL[role].toLowerCase()} en ${site}.`);
+  })));
   document.getElementById('validation').innerHTML=`<div class="panel"><h3>Validación de cobertura</h3>
-  ${alerts.length?`<p class="bad">${alerts.length} posible(s) incumplimiento(s)</p><ul>${alerts.slice(0,35).map(a=>`<li class="small">${esc(a)}</li>`).join('')}</ul>`:'<p class="good">Se cumplen las reglas mínimas de cobertura por perfil y sede.</p>'}
-  <p class="muted small">De lunes a viernes se revisa cada una de las cuatro sedes principales. El sábado se revisa conjuntamente Claustro USEB y Claustro Mezanine, sin exigir los tres perfiles en cada sede.</p></div>`;
+  ${alerts.length?`<p class="bad">${alerts.length} posible(s) incumplimiento(s)</p><ul>${alerts.slice(0,30).map(a=>`<li class="small">${esc(a)}</li>`).join('')}</ul>`:'<p class="good">Las cuatro sedes principales tienen al menos una persona por perfil en cada día.</p>'}
+  <p class="muted small">La validación revisa presencia por perfil y sede. Comprueba las horas y descansos antes de aprobar la propuesta.</p></div>`;
 }
 function weekHasEnded(h){
   if(!h.weekDate)return false;
@@ -690,6 +682,7 @@ document.getElementById('weekType').addEventListener('change',()=>{
 
 renderPeople();
 document.getElementById('manualSite').innerHTML=siteOptions(SITES[0]);
+document.getElementById('manualShift').innerHTML=shiftOptions('1');
 persist();
 </script>
 </body>
